@@ -1,0 +1,122 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/base:debian-12
+    volumes:
+      - ../..:/workspaces:cached
+      - claude-config:/home/vscode/.claude       # Docker-managed; NOT a host path
+    command: sleep infinity
+    depends_on:
+      ollama:
+        condition: service_started
+      model-init:
+        condition: service_completed_successfully
+    environment:
+      # for login persistence
+      CLAUDE_CONFIG_DIR: "/home/vscode/.claude"
+      # SkillSpector -> local model (service name resolves on the compose network)
+      SKILLSPECTOR_PROVIDER: "openai"
+      SKILLSPECTOR_MODEL: "qwen2.5-coder:7b"
+      OPENAI_BASE_URL: "http://ollama:11434/v1"
+      OPENAI_API_KEY: "not-needed"
+      # For terminal use of the model via the ollama CLI, if installed
+      OLLAMA_HOST: "ollama:11434"
+      # OTEL telemetry
+      CLAUDE_CODE_ENABLE_TELEMETRY: "1"
+      OTEL_METRICS_EXPORTER: "otlp"
+      OTEL_LOGS_EXPORTER: "otlp"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://prometheus:9090/api/v1/otlp/v1/metrics"
+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT: "http://loki:3100/otlp/v1/logs"
+      # Prometheus's OTLP receiver wants cumulative, not Claude Code's DELTA default.
+      OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "cumulative"
+      OTEL_METRIC_EXPORT_INTERVAL: "10000"
+      # Privacy gates — OFF by default (numbers only, no content).
+      OTEL_LOG_USER_PROMPTS: "0"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - { driver: nvidia, count: all, capabilities: [gpu] }
+
+  ollama:
+    image: ollama/ollama:0.40.9
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama          # persist the model across rebuilds
+    environment:
+      OLLAMA_KEEP_ALIVE: "-1"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 7g
+          # ── GPU for inference too (gpu_usage=yes means THIS host has an NVIDIA GPU
+          # + Container Toolkit; `dev` gets it for training, `ollama` for the model).
+          # They share the card by hand: `just model-off` before training.
+        reservations:
+          devices:
+            - { driver: nvidia, count: all, capabilities: [gpu] }
+
+  # One-shot: pulls the model into the volume, then exits. Idempotent on rebuilds.
+  model-init:
+    image: ollama/ollama:0.40.9
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: "ollama:11434"
+    entrypoint: ["/bin/sh", "-c", "ollama pull qwen2.5-coder:7b"]
+    restart: "no"
+  # monitoring stack. Off by default - start with `just monitor-up`, stop with `just monitor-down`.
+  prometheus:
+    image: prom/prometheus:v3.15.1
+    profiles: ["monitoring"]
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-otlp-receiver"     # native OTLP ingest — no Collector container needed
+      - "--enable-feature=otlp-deltatocumulative"   # converts DELTA metrics to cumulative for Prometheus
+    volumes:
+      - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro   # ro - read only sequence
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090" 
+
+  loki:
+    image: grafana/loki:3.7.9                  # log store
+    profiles: ["monitoring"]
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - loki-data:/loki                         # persistent log storage
+    ports:
+      - "127.0.0.1:3100:3100"                             # reachable from the host too
+
+  grafana:
+    image: grafana/grafana:13.2.4              # the dashboard UI
+    profiles: ["monitoring"]
+    depends_on: [prometheus, loki]            
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"         # no login screen | anonymous access
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Editor"      
+      GF_INSTALL_PLUGINS: ""                    
+    volumes:
+      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning:ro   # datasources + dashboard loader
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro   # the dashboard JSON itself
+      - grafana-data:/var/lib/grafana           # Grafana's own state (users, preferences)
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  claude-config:
+  ollama-models:
+  prometheus-data:
+  loki-data:
+  grafana-data:

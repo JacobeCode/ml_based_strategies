@@ -1,0 +1,13 @@
+name: local-coder
+version: 0.0.1
+schema: v1
+
+models:
+    - name: "Local - qwen2.5-coder:7b"
+      provider: ollama
+      model: "qwen2.5-coder:7b"
+      apiBase: http://ollama:11434
+      roles:
+        - chat
+        - edit
+        - autocomplete

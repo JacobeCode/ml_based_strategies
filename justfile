@@ -1,0 +1,57 @@
+# List commands
+default:
+    @just --list
+
+# Scan skills (static + local LLM)
+scan target="./skills/":
+    ./scripts/scan.sh {{target}}
+
+# Ask the local model something
+ask *q:
+    ./scripts/ask.sh {{q}}
+
+# Run tests
+test target="src/test":
+    uv run pytest {{target}}
+
+# Lint + format
+lint target="./src/":
+    uv run ruff check --fix {{target}}
+    uv run ruff format {{target}}
+
+# Verify CUDA is visible to PyTorch in the container
+gpu:
+    uv run python -c "import torch; print('cuda:', torch.cuda.is_available()); torch.cuda.is_available() and print(torch.cuda.get_device_name(0))"
+
+# disable local_model to free up the GPU
+model-off:
+    ./scripts/model.sh off
+
+# enable local_model on the GPU (with warm start)
+model-on:
+    ./scripts/model.sh on
+
+# Bring up the usage/cost dashboard (Grafana + Prometheus + Loki) — opt-in, not part of `docker compose up` (§16)
+monitor-up:
+    @if command -v docker >/dev/null 2>&1; then \
+        docker compose -f .devcontainer/docker-compose.yml -p ml_based_strategies_devcontainer --profile monitoring up -d; \
+    else \
+        echo "No docker CLI here (dev container). Run this in a HOST terminal, in the project folder:"; \
+        echo "  docker compose -f .devcontainer/docker-compose.yml -p ml_based_strategies_devcontainer --profile monitoring up -d"; \
+        exit 1; \
+    fi
+
+# Tear the monitoring stack back down (data volumes persist)
+monitor-down:
+    @if command -v docker >/dev/null 2>&1; then \
+        docker compose -f .devcontainer/docker-compose.yml -p ml_based_strategies_devcontainer --profile monitoring down; \
+    else \
+        echo "No docker CLI here (dev container). Run this in a HOST terminal, in the project folder:"; \
+        echo "  docker compose -f .devcontainer/docker-compose.yml -p ml_based_strategies_devcontainer --profile monitoring down"; \
+        exit 1; \
+    fi
+
+
+# Open the dashboard
+monitor-open:
+    xdg-open http://localhost:3000 2>/dev/null || open http://localhost:3000 2>/dev/null || echo "open http://localhost:3000"
