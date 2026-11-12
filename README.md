@@ -1,6 +1,7 @@
 # ML_Based_Strategies
 
-For fill later.
+TO DO:
+- Fedora setup for Distro.
 
 ## Status
 
