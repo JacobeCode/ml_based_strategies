@@ -1,0 +1,126 @@
+# Map: locations and the paths between them.
+# x/y are display-only; the sim runs on the graph (paths + cost in time points).
+
+[[locations]]
+id = "village"
+name = "Ashfall Village"
+kind = "settlement"
+x = 0.0
+y = 0.0
+owner = "gang"
+protected = true
+
+[[locations]]
+id = "checkpoint"
+name = "Iron Gate"
+kind = "base"
+x = -2.0
+y = -1.5
+owner = "order"
+
+[[locations]]
+id = "farm"
+name = "Abandoned Farm"
+kind = "field"
+x = 2.0
+y = 0.5
+
+[[locations]]
+id = "bridge"
+name = "Railway Bridge"
+kind = "field"
+x = 0.5
+y = 2.0
+
+[[locations]]
+id = "factory"
+name = "Old Factory"
+kind = "base"
+x = 3.0
+y = 3.0
+owner = "gang"
+
+[[locations]]
+id = "swamp"
+name = "Swamp"
+kind = "anomaly"
+x = -2.5
+y = 2.0
+
+[[locations]]
+id = "outpost"
+name = "Northern Outpost"
+kind = "base"
+x = -1.0
+y = 4.0
+owner = "order"
+
+[[locations]]
+id = "lab"
+name = "Hidden Lab"
+kind = "anomaly"
+x = 1.5
+y = 5.5
+
+[[locations]]
+id = "core"
+name = "The Spire"
+kind = "base"
+x = 0.0
+y = 7.0
+owner = "lancers"
+
+[[paths]]
+a = "village"
+b = "checkpoint"
+cost = 2
+
+[[paths]]
+a = "village"
+b = "farm"
+cost = 2
+
+[[paths]]
+a = "village"
+b = "bridge"
+cost = 3
+
+[[paths]]
+a = "farm"
+b = "factory"
+cost = 3
+
+[[paths]]
+a = "bridge"
+b = "factory"
+cost = 2
+
+[[paths]]
+a = "bridge"
+b = "swamp"
+cost = 4
+
+[[paths]]
+a = "bridge"
+b = "outpost"
+cost = 3
+
+[[paths]]
+a = "swamp"
+b = "outpost"
+cost = 3
+
+[[paths]]
+a = "outpost"
+b = "lab"
+cost = 3
+
+[[paths]]
+a = "factory"
+b = "lab"
+cost = 4
+
+[[paths]]
+a = "lab"
+b = "core"
+cost = 3

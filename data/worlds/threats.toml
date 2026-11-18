@@ -1,0 +1,20 @@
+# Threats: what is at a location, independent of who owns it. Optional file.
+# kind: anomaly | monsters | trap; level: 1-5.
+
+[[threats]]
+id = "swamp_anomalies"
+location = "swamp"
+kind = "anomaly"
+level = 2
+
+[[threats]]
+id = "bridge_trap"
+location = "bridge"
+kind = "trap"
+level = 1
+
+[[threats]]
+id = "lab_monsters"
+location = "lab"
+kind = "monsters"
+level = 4
