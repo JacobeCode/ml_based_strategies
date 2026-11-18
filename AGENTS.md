@@ -34,6 +34,6 @@ Guidance for coding agents (Claude Code, Continue, Codex, …) working in this r
 ## Monitoring
 
 - Cost, token, and tool-call dashboards (Claude Code's own OTel export — works under subscription login, not just an API key).
-- Grafana listens on `127.0.0.1:3000`; VS Code Live Preview is moved to `3001` (`livePreview.portNumber` in `devcontainer.json`) so they don't clash — don't put anything else on 3000. `just monitor-open` can't launch a browser from inside the container — give the user the URL instead.
+- Grafana listens on `127.0.0.1:3000`; VS Code Live Preview uses `5500` plus `5501` for live reload (`livePreview.portNumber` in `devcontainer.json`). Keep 3000 (Grafana), 3100 (Loki), 9090 (Prometheus) and 11434 (Ollama) free of anything else. `just monitor-open` can't launch a browser from inside the container — give the user the URL instead.
 - No local-model panel: Ollama usage (tokens/latency) is not monitored.
 - Prompt/response text capture is off by default (`OTEL_LOG_USER_PROMPTS`/`OTEL_LOG_RAW_API_BODIES` in `.env`, both unset) — turn on deliberately, not something to flip without thinking about what it captures.

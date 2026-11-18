@@ -24,7 +24,7 @@ STALKER A-Life–inspired simulation of factions and NPCs, with ML/statistical d
 - [ ] Narrow the workspace mount: `../..` exposes sibling host projects
 - [ ] Try `/sandbox` for Claude Code and check whether it blocks the VS Code socket (`$BROWSER`, `code`)
 - [ ] Decide on git credential and SSH agent forwarding into the container
-- [x] Port clash: Live Preview moved to 3001, Grafana keeps 3000
+- [x] Port clash: Live Preview moved to 5500, Grafana keeps 3000
 - [ ] `just monitor-open` can't open anything from inside the container
 - [ ] Back up the `claude-config` volume (Claude memory and login), which is lost on `docker volume prune`
 
@@ -44,7 +44,7 @@ Early prototype: a world map loads and renders. No agents, ticks or decision mod
 | Virtual env | `.venv/` |
 | Dev container | Docker Compose (`.devcontainer/`) — services: `dev`, `ollama`, `model-init` |
 | GPU | passthrough on `dev` (NVIDIA Container Toolkit required on host) |
-| Monitoring | Grafana/Prometheus/Loki, opt-in via `just monitor-up` (not part of `docker compose up`); Grafana on `127.0.0.1:3000` (Live Preview moved to `3001` to avoid a clash) |
+| Monitoring | Grafana/Prometheus/Loki, opt-in via `just monitor-up` (not part of `docker compose up`); Grafana on `127.0.0.1:3000` (Live Preview on `5500`/`5501` to avoid a clash) |
 
 ## Dependencies (`pyproject.toml`)
 
