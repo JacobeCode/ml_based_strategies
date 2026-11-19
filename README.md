@@ -5,7 +5,7 @@ STALKER A-Life–inspired simulation of factions and NPCs, with ML/statistical d
 ## In progress
 
 **Sim**
-- Simulation grounds: a location-graph world (`data/worlds/zone.toml`, `world.py`) and a Plotly view (`viz.py`). Run `uv run python -m ml_based_strategies.main`, then open `out/world.html` with Live Preview.
+- Simulation grounds: a location-graph world (`data/worlds/`: `factions.toml`, `locations.toml`, `paths.toml`, `threats.toml`; code in `world/`), and a Plotly view (`viz/`, style in `data/viz/style.toml`). Run `uv run python -m ml_based_strategies.main`, then open `out/world.html` with Live Preview.
 
 **Container hardening**
 - (nothing active)
@@ -19,11 +19,18 @@ STALKER A-Life–inspired simulation of factions and NPCs, with ML/statistical d
 - [ ] Rules from data as action masking before `decide()` (started: `World.can_enter`)
 - [ ] Design for long time skips
 - [ ] Notebook setup (`ipykernel`) for Plotly analysis
+- [ ] Graph algorithms for the sim:
+  - shortest travel paths (Dijkstra on `cost`)
+  - routes limited to what a faction may enter (`can_enter`)
+  - chokepoints
+
+  When this starts, pull the connectivity flood fill out of `WorldSpec._check_graph` into a shared `reachable(adjacency_dict, start)` helper in `world/`. Decide stdlib vs `networkx` then; today `networkx` is only pulled in by torch, in the `train` group.
 
 **Container hardening** (fixed as issues come up)
 - [ ] Narrow the workspace mount: `../..` exposes sibling host projects
 - [ ] Try `/sandbox` for Claude Code and check whether it blocks the VS Code socket (`$BROWSER`, `code`)
-- [ ] Decide on git credential and SSH agent forwarding into the container
+- [x] Decide on git credential and SSH agent forwarding: stay on SSH, keep agent forwarding (keys stay on the host)
+- [ ] Clean up the WSL host shell setup: tidy the `keychain` agent line in `~/.bashrc` and remove the broken `/bin/brew` line from the rc files
 - [x] Port clash: Live Preview moved to 5500, Grafana keeps 3000
 - [ ] `just monitor-open` can't open anything from inside the container
 - [ ] Back up the `claude-config` volume (Claude memory and login), which is lost on `docker volume prune`

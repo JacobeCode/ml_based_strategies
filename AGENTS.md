@@ -9,6 +9,33 @@ Guidance for coding agents (Claude Code, Continue, Codex, …) working in this r
 
 ## Code style
 
+- Docstrings: opening and closing `"""` on their own lines, even for one-liners:
+
+  ```python
+  """
+  Load and validate a world directory.
+  """
+  ```
+
+- Naming: suffix container and frame variables with their type, so it's clear at a glance what you're holding:
+
+  | Type | Suffix | Example |
+  |---|---|---|
+  | `dict` | `_dict` | `locations_dict` |
+  | `list` | `_lst` | `loc_ids_lst` |
+  | `set` / `frozenset` | `_set` | `seen_set` |
+  | `tuple` | `_tup` | `node_traces_tup` |
+  | pandas `DataFrame` | `_df` | `episodes_df` |
+  | pandas `Series` | `_ser` | `rewards_ser` |
+  | Spark `DataFrame` | `_sdf` | `episodes_sdf` |
+  | NumPy array | `_arr` | `features_arr` |
+  | torch tensor | `_ten` | `logits_ten` |
+
+  - Applies to variables, parameters, constants (`DEFAULTS_DICT`) and runtime attributes (`World.locations_dict`).
+  - Not applied to:
+    - scalars, model instances, `Path`s, figures, or single-item loop variables (`loc`, `p`)
+    - pydantic schema fields that mirror data-file keys (`WorldSpec.factions`, `Faction.allowed_kinds`): the TOML is the contract
+  - When renaming, don't touch method calls (`.items()`) or prose in strings and comments.
 - Coverage — two separate gates:
   - Total: `[tool.coverage.report] fail_under` — enforced automatically via `pytest`'s `--cov`.
   - Per-file: `coverage-threshold` (separate tool; top-level `[coverage-threshold]` table) — reads `coverage.json`, so it's `coverage json -q && coverage-threshold`, not standalone.
