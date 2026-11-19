@@ -1,20 +1,20 @@
 # Factions of this world.
-# `allowed` = location kinds or location ids a faction may enter.
+# `allowed_kinds` = location kinds a faction may enter; `allowed_ids` = single locations it may enter regardless of kind.
 
 [[factions]]
 id = "gang"
 name = "Gang"
 color = "#d9a441"
-allowed = ["settlement", "field", "anomaly", "base"]
+allowed_kinds = ["settlement", "field", "anomaly", "base"]
 
 [[factions]]
 id = "order"
 name = "Order"
 color = "#3a6ea5"
-allowed = ["base", "field", "settlement"]
+allowed_kinds = ["base", "field", "settlement"]
 
 [[factions]]
 id = "lancers"
 name = "Lancers"
 color = "#b03a48"
-allowed = ["anomaly", "field", "base"]
+allowed_kinds = ["anomaly", "field", "base"]
