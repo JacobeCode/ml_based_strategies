@@ -1,4 +1,6 @@
-"""Base model for edge schemas: files, decide() I/O, LLM output."""
+"""
+Base model for edge schemas: files, decide() I/O, LLM output.
+"""
 
 from pydantic import BaseModel, ConfigDict
 
