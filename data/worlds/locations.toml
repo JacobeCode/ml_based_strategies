@@ -1,4 +1,4 @@
-# Map: locations and the paths between them.
+# Locations: the nodes of the world graph; paths.toml connects them.
 # x/y are display-only; the sim runs on the graph (paths + cost in time points).
 
 [[locations]]
@@ -69,58 +69,3 @@ kind = "base"
 x = 0.0
 y = 7.0
 owner = "lancers"
-
-[[paths]]
-a = "village"
-b = "checkpoint"
-cost = 2
-
-[[paths]]
-a = "village"
-b = "farm"
-cost = 2
-
-[[paths]]
-a = "village"
-b = "bridge"
-cost = 3
-
-[[paths]]
-a = "farm"
-b = "factory"
-cost = 3
-
-[[paths]]
-a = "bridge"
-b = "factory"
-cost = 2
-
-[[paths]]
-a = "bridge"
-b = "swamp"
-cost = 4
-
-[[paths]]
-a = "bridge"
-b = "outpost"
-cost = 3
-
-[[paths]]
-a = "swamp"
-b = "outpost"
-cost = 3
-
-[[paths]]
-a = "outpost"
-b = "lab"
-cost = 3
-
-[[paths]]
-a = "factory"
-b = "lab"
-cost = 4
-
-[[paths]]
-a = "lab"
-b = "core"
-cost = 3
