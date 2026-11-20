@@ -1,0 +1,56 @@
+# Paths between locations (undirected); cost is travel time in time points.
+
+[[paths]]
+a = "village"
+b = "checkpoint"
+cost = 2
+
+[[paths]]
+a = "village"
+b = "farm"
+cost = 2
+
+[[paths]]
+a = "village"
+b = "bridge"
+cost = 3
+
+[[paths]]
+a = "farm"
+b = "factory"
+cost = 3
+
+[[paths]]
+a = "bridge"
+b = "factory"
+cost = 2
+
+[[paths]]
+a = "bridge"
+b = "swamp"
+cost = 4
+
+[[paths]]
+a = "bridge"
+b = "outpost"
+cost = 3
+
+[[paths]]
+a = "swamp"
+b = "outpost"
+cost = 3
+
+[[paths]]
+a = "outpost"
+b = "lab"
+cost = 3
+
+[[paths]]
+a = "factory"
+b = "lab"
+cost = 4
+
+[[paths]]
+a = "lab"
+b = "core"
+cost = 3

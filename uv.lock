@@ -1039,6 +1039,7 @@ version = "0.1.0"
 source = { editable = "." }
 default-groups = ["dev", "viz"]
 dependencies = [
+    { name = "pydantic" },
     { name = "skillspector" },
 ]
 
@@ -1060,7 +1061,10 @@ viz = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "skillspector", git = "https://github.com/NVIDIA/skillspector.git?rev=v2.13.1" }]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2" },
+    { name = "skillspector", git = "https://github.com/NVIDIA/skillspector.git?rev=v2.13.1" },
+]
 
 [package.metadata.requires-dev]
 dev = [

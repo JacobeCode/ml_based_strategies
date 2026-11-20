@@ -1,0 +1,4 @@
+# Display-only settings for viz/. The sim never reads this file.
+
+# Marker color for locations no faction owns.
+neutral = "#9a9a9a"

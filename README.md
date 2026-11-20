@@ -2,35 +2,6 @@
 
 STALKER A-Life–inspired simulation of factions and NPCs, with ML/statistical decision models. Prototype in Python, designed to be ported to a game engine later.
 
-## In progress
-
-**Sim**
-- Simulation grounds: a location-graph world (`data/worlds/zone.toml`, `world.py`) and a Plotly view (`viz.py`). Run `uv run python -m ml_based_strategies.main`, then open `out/world.html` with Live Preview.
-
-**Container hardening**
-- (nothing active)
-
-## To do
-
-**Sim**
-- [ ] Squads/NPCs placed on the map, with snapshots over ticks
-- [ ] Time system: `advance(time_points)`, with fine ticks for NPC life, coarse passes for factions, and a fixed world calendar
-- [ ] `decide(state, options) -> {choice, probs}`: utility AI with a softmax as the baseline, then local Ollama for factions, a small classifier for NPCs, and distillation
-- [ ] Rules from data as action masking before `decide()` (started: `World.can_enter`)
-- [ ] Design for long time skips
-- [ ] Notebook setup (`ipykernel`) for Plotly analysis
-
-**Container hardening** (fixed as issues come up)
-- [ ] Narrow the workspace mount: `../..` exposes sibling host projects
-- [ ] Try `/sandbox` for Claude Code and check whether it blocks the VS Code socket (`$BROWSER`, `code`)
-- [ ] Decide on git credential and SSH agent forwarding into the container
-- [x] Port clash: Live Preview moved to 5500, Grafana keeps 3000
-- [ ] `just monitor-open` can't open anything from inside the container
-- [ ] Back up the `claude-config` volume (Claude memory and login), which is lost on `docker volume prune`
-
-**Other**
-- [ ] Fedora setup for Distro
-
 ## Status
 
 Early prototype: a world map loads and renders. No agents, ticks or decision models yet.
