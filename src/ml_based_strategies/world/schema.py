@@ -23,7 +23,8 @@ class Faction(SpecModel):
     id: str
     name: str
     color: str
-    allowed: frozenset[str] = frozenset()
+    allowed_kinds: frozenset[str] = frozenset()  # location kinds this faction may enter
+    allowed_ids: frozenset[str] = frozenset()  # single locations it may enter regardless of kind
 
 
 class Edge(SpecModel):
@@ -56,13 +57,15 @@ def build_adjacency(loc_ids_lst: list[str], paths_lst: list[Edge]) -> dict[str, 
     """
     adjacency_dict: dict[str, dict[str, int]] = {loc_id: {} for loc_id in loc_ids_lst}
     for p in paths_lst:
+        # TODO: a duplicate pair (A-B twice, or A-B + B-A) silently keeps the last cost; reject it in _check_graph.
         adjacency_dict[p.a][p.b] = adjacency_dict[p.b][p.a] = p.cost
     return adjacency_dict
 
 
-class World(SpecModel):
+class WorldSpec(SpecModel):
     """
     Schema of a whole world (its files merged); cross-file references and connectivity are checked here.
+    Each field is loaded from its own `<field>.toml`; a field with a default makes its file optional.
     """
 
     factions: list[Faction]
@@ -91,6 +94,14 @@ class World(SpecModel):
         for t in self.threats:
             if t.location not in loc_ids_lst:
                 raise ValueError(f"threat {t.id!r} references unknown location {t.location!r}")
+
+        # A typo in allowed_* would silently deny entry, so every entry must match something on the map.
+        kinds_set = {loc.kind for loc in self.locations}
+        for f in self.factions:
+            if unknown_set := f.allowed_kinds - kinds_set:
+                raise ValueError(f"faction {f.id!r} allows unknown location kinds {sorted(unknown_set)}")
+            if unknown_set := f.allowed_ids - set(loc_ids_lst):
+                raise ValueError(f"faction {f.id!r} allows unknown location ids {sorted(unknown_set)}")
 
         if loc_ids_lst:
             adjacency_dict = build_adjacency(loc_ids_lst, self.paths)
