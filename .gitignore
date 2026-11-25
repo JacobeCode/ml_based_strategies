@@ -38,3 +38,6 @@ logs/
 
 # CodeGraph output
 .codegraph/
+
+# Sim output (HTML snapshots)
+out/
