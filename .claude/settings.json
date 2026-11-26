@@ -1,4 +1,7 @@
 {
+  "permissions": {
+    "ask": ["Bash(sudo:*)", "Bash(rm:*)"]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/scripts/statusline.sh\"",

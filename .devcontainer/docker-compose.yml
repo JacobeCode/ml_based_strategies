@@ -5,6 +5,8 @@ services:
       - ../..:/workspaces:cached
       - claude-config:/home/vscode/.claude       # Docker-managed; NOT a host path
     command: sleep infinity
+    ports:
+      - "127.0.0.1:2222:2222"   # sshd feature; `ssh -A` from Windows forwards the host agent, keys never enter the container
     depends_on:
       ollama:
         condition: service_started
@@ -88,7 +90,7 @@ services:
       - ../monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro   # ro - read only sequence
       - prometheus-data:/prometheus
     ports:
-      - "127.0.0.1:9090:9090" 
+      - "127.0.0.1:9090:9090"
 
   loki:
     image: grafana/loki:3.7.9                  # log store
@@ -102,11 +104,11 @@ services:
   grafana:
     image: grafana/grafana:13.2.4              # the dashboard UI
     profiles: ["monitoring"]
-    depends_on: [prometheus, loki]            
+    depends_on: [prometheus, loki]
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"         # no login screen | anonymous access
-      GF_AUTH_ANONYMOUS_ORG_ROLE: "Editor"      
-      GF_INSTALL_PLUGINS: ""                    
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Editor"
+      GF_INSTALL_PLUGINS: ""
     volumes:
       - ../monitoring/grafana/provisioning:/etc/grafana/provisioning:ro   # datasources + dashboard loader
       - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro   # the dashboard JSON itself
