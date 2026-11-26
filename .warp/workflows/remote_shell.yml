@@ -1,0 +1,5 @@
+name: dev shell
+command: docker exec -it -u vscode -w "/workspaces/{{repo}}" "{{repo}}_devcontainer-dev-1" bash
+arguments:
+  - name: repo
+    default_value: ml_based_strategies
